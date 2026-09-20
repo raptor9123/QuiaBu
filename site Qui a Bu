@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qui a bu — Association d'œnologie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Fraunces:ital,opsz,wght@1,9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Palette inspirée du vin rouge et du vin blanc.
+       --wine / --wine-deep / --black : la bouteille de rouge (verre sombre, presque noir en bouteille pleine).
+       --gold / --gold-light : la couleur du vin blanc / de la capsule dorée — sert d'accent chaud sur fond sombre.
+       Pour aller plus loin dans le thème, on pourrait ajouter une vraie teinte "vin blanc" (paille/ambre clair)
+       en fond de carte ou de section, ex : --white-wine: #E8C468; --white-wine-pale: #F3E4B8; */
+    --wine: #3B0E1C;
+    --wine-deep: #150609;
+    --black: #0B0705;
+    --gold: #B08D3F;
+    --gold-light: #D4B876;
+    --parchment: #EFE7D6;
+    --ink: #1A1210;
+    --vine: #57633F;
+    --paper: #F5F1E7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  h1,h2,h3,.serif{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    color:var(--wine-deep);
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 32px;}
+
+  /* NAV */
+  nav{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:20px 32px;
+    position:sticky;top:0;
+    background:rgba(11,7,5,0.94);
+    backdrop-filter:blur(6px);
+    z-index:100;
+    border-bottom:1px solid rgba(176,141,63,0.2);
+  }
+  nav .brand{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--parchment);}
+  nav ul{display:flex;gap:28px;list-style:none;font-size:0.92rem;}
+  nav ul a{color:var(--parchment);}
+  nav ul a:hover{color:var(--gold-light);}
+  .burger{
+    display:none;
+    flex-direction:column;
+    gap:5px;
+    background:none;border:none;cursor:pointer;padding:6px;
+  }
+  .burger span{width:24px;height:2px;background:var(--parchment);display:block;}
+
+  @media (max-width:800px){
+    nav ul{
+      position:absolute;
+      top:100%;left:0;right:0;
+      background:var(--black);
+      flex-direction:column;
+      gap:0;
+      max-height:0;
+      overflow:hidden;
+      transition:max-height .3s ease;
+      border-bottom:1px solid rgba(176,141,63,0.2);
+    }
+    nav ul.open{max-height:320px;}
+    nav ul li{width:100%;}
+    nav ul a{display:block;padding:16px 32px;border-top:1px solid rgba(176,141,63,0.12);}
+    .burger{display:flex;}
+  }
+
+  /* HERO */
+  .hero{
+    background:linear-gradient(160deg, var(--black) 0%, var(--wine) 65%, var(--wine) 100%);
+    color:var(--parchment);
+    padding:110px 32px 90px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    right:-120px;top:-60px;
+    width:420px;height:420px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(176,141,63,0.18), transparent 70%);
+  }
+  .hero-inner{max-width:680px;position:relative;}
+  .hero h1{
+    font-size:clamp(2.1rem, 5vw, 3.6rem);
+    line-height:1.1;
+    color:var(--parchment);
+    margin-bottom:22px;
+  }
+  .hero h1 em{font-style:italic;color:var(--gold-light);}
+  .hero p{font-size:1.05rem;max-width:520px;color:#D9CFC0;margin-bottom:32px;}
+  .btn{
+    display:inline-block;
+    background:var(--gold);
+    color:var(--wine-deep);
+    padding:14px 30px;
+    font-weight:500;
+    border-radius:2px;
+    font-size:0.95rem;
+    transition:background .2s ease;
+  }
+  .btn:hover{background:var(--gold-light);}
+  .btn-outline{
+    display:inline-block;
+    margin-left:14px;
+    padding:14px 30px;
+    border:1px solid rgba(217,207,192,0.4);
+    color:var(--parchment);
+    border-radius:2px;
+    font-size:0.95rem;
+  }
+
+  /* SECTION GENERIC */
+  section{padding:80px 32px;}
+  .section-head{max-width:600px;margin-bottom:48px;}
+  .section-head h2{font-size:1.9rem;margin-bottom:14px;}
+  .section-head p{color:#5A4F45;font-size:1.02rem;}
+
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+  .about-grid p{color:#443A32;margin-bottom:16px;max-width:46ch;}
+  .quote{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:1.3rem;
+    color:var(--wine-deep);
+    border-left:3px solid var(--gold);
+    padding-left:24px;
+    line-height:1.4;
+  }
+  .quote span{display:block;font-family:'Inter',sans-serif;font-style:normal;font-size:0.85rem;color:#7A6D5F;margin-top:14px;}
+
+  /* HORAIRES */
+  .horaires{background:var(--parchment);}
+  table.hours{width:100%;max-width:640px;border-collapse:collapse;}
+  table.hours th, table.hours td{
+    text-align:left;padding:14px 12px;
+    border-bottom:1px solid rgba(59,14,28,0.15);
+    font-size:0.95rem;
+  }
+  table.hours th{color:var(--wine-deep);font-family:'Fraunces',serif;font-weight:500;}
+  table.hours td.closed{color:#A08F7C;font-style:italic;}
+
+  /* COURS */
+  .cours{background:var(--black);color:var(--parchment);}
+  .cours .section-head h2{color:var(--parchment);}
+  .cours .section-head p{color:#C9BBA9;}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(217,207,192,0.15);}
+  .card{
+    background:var(--black);
+    padding:34px 26px;
+    border-top:1px solid rgba(176,141,63,0.35);
+  }
+  .card h3{color:var(--gold-light);font-size:1.15rem;margin-bottom:10px;}
+  .card p{color:#C9BBA9;font-size:0.93rem;}
+
+  /* OU NOUS TROUVER */
+  .lieu-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:stretch;}
+  .lieu-info p{color:#443A32;margin-bottom:10px;font-size:0.98rem;}
+  .lieu-info .label-line{color:var(--wine-deep);font-weight:500;margin-top:20px;}
+  .map-frame{
+    border:1px solid rgba(59,14,28,0.15);
+    border-radius:2px;
+    overflow:hidden;
+    min-height:280px;
+  }
+  .map-frame iframe{width:100%;height:100%;min-height:280px;border:0;display:block;}
+
+  /* CONTACT - BOTTLE */
+  .contact{
+    background:var(--paper);
+    display:flex;
+    justify-content:center;
+    padding:90px 32px 110px;
+  }
+  .contact-layout{
+    display:grid;
+    grid-template-columns:320px 1fr;
+    gap:64px;
+    max-width:960px;
+    align-items:center;
+  }
+  .contact-intro h2{font-size:1.9rem;margin-bottom:16px;}
+  .contact-intro p{color:#5A4F45;margin-bottom:14px;max-width:38ch;}
+  .contact-intro ul{list-style:none;margin-top:24px;color:#443A32;font-size:0.95rem;}
+  .contact-intro li{margin-bottom:10px;padding-left:18px;position:relative;}
+  .contact-intro li::before{
+    content:"";
+    position:absolute;left:0;top:8px;
+    width:6px;height:6px;border-radius:50%;
+    background:var(--gold);
+  }
+
+  .bottle{
+    position:relative;
+    width:250px;
+    aspect-ratio:250/620;
+    margin:0 auto;
+    filter:drop-shadow(0 34px 44px rgba(0,0,0,0.45));
+  }
+  .bottle svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+  }
+  .label{
+    position:absolute;
+    left:11%;
+    right:11%;
+    top:40%;
+    height:44%;
+    background:var(--parchment);
+    border:1px solid rgba(0,0,0,0.15);
+    padding:14px 14px 12px;
+    border-radius:1px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.25);
+    display:flex;
+    flex-direction:column;
+  }
+  .label .eyebrow{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:0.56rem;
+    color:var(--wine);
+    text-align:center;
+    margin-bottom:2px;
+  }
+  .label h3{
+    text-align:center;
+    font-size:0.78rem;
+    margin-bottom:0;
+  }
+  .label .rule{
+    width:24px;height:1px;background:var(--gold);
+    margin:6px auto 7px;
+  }
+  .label .coords{
+    font-size:0.53rem;
+    color:#4A3D32;
+    text-align:center;
+    line-height:1.5;
+    margin-bottom:8px;
+  }
+  .label .coords strong{color:var(--wine);display:block;font-size:0.55rem;}
+  .label form{display:flex;flex-direction:column;gap:5px;}
+  .label input,.label textarea{
+    background:transparent;
+    border:none;
+    border-bottom:1px solid rgba(59,14,28,0.3);
+    padding:2px 2px;
+    font-family:'Inter',sans-serif;
+    font-size:0.56rem;
+    color:var(--ink);
+    width:100%;
+  }
+  .label input:focus,.label textarea:focus{
+    outline:none;
+    border-bottom-color:var(--gold);
+  }
+  .label textarea{resize:none;height:20px;}
+  .label input::placeholder,.label textarea::placeholder{color:#8A7C6D;}
+  .label button{
+    margin-top:4px;
+    background:var(--wine);
+    color:var(--parchment);
+    border:none;
+    padding:5px;
+    font-family:'Inter',sans-serif;
+    font-size:0.56rem;
+    border-radius:1px;
+    cursor:pointer;
+    transition:background .2s ease;
+  }
+  .label button:hover{background:var(--wine-deep);}
+  .form-note{font-size:0.8rem;color:#8A7C6D;margin-top:14px;}
+
+  footer{
+    background:var(--black);
+    color:#9C8E7D;
+    text-align:center;
+    padding:32px;
+    font-size:0.85rem;
+  }
+
+  @media (max-width:820px){
+    .about-grid{grid-template-columns:1fr;}
+    .lieu-grid{grid-template-columns:1fr;}
+    .cards{grid-template-columns:1fr;}
+    .contact-layout{grid-template-columns:1fr;}
+    .bottle{width:100%;max-width:250px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">Qui a bu</div>
+  <button class="burger" id="burgerBtn" aria-label="Ouvrir le menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul id="navLinks">
+    <li><a href="#accueil">Accueil</a></li>
+    <li><a href="#horaires">Horaires</a></li>
+    <li><a href="#cours">Cours</a></li>
+    <li><a href="#ou-nous-trouver">Où nous trouver</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="accueil" class="hero">
+  <div class="hero-inner">
+    <h1>Le vin se comprend<br>mieux <em>à plusieurs</em></h1>
+    <p>Une association pour apprendre à déguster, à reconnaître un terroir, et à partager cette curiosité avec d'autres passionnés — débutants comme connaisseurs.</p>
+    <a href="#contact" class="btn">Devenir membre</a>
+    <a href="#cours" class="btn-outline">Voir les cours</a>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about-grid">
+    <div>
+      <div class="section-head" style="margin-bottom:0;">
+        <h2>Une passion transmise</h2>
+      </div>
+      <p>Qui a bu est née d'une idée simple : le vin se raconte mieux qu'il ne se consomme. Chaque rencontre est l'occasion d'apprendre à lire une étiquette, à distinguer un cépage, à comprendre ce qu'un sol donne à un raisin.</p>
+      <p>Ouverte à tous, l'association réunit celles et ceux qui veulent affiner leur palais dans un cadre convivial, sans jargon inutile ni prétention.</p>
+      <p>Elle est présidée par <strong>Philippe Cabut</strong>, passionné de vin de longue date, qui a fondé Qui a bu avec l'envie de transmettre cette passion à travers des cours d'œnologie ouverts à tous.</p>
+    </div>
+    <div class="quote">
+      « On ne déguste jamais seul un bon souvenir. »
+      <span>Philippe Cabut, Président de Qui a bu</span>
+    </div>
+  </div>
+</section>
+
+<section id="horaires" class="horaires">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Horaires</h2>
+      <p>Pour le moment, les cours ont lieu une fois par mois, le vendredi soir. Le rythme pourra s'intensifier selon la demande.</p>
+    </div>
+    <table class="hours">
+      <tr><th>Jour</th><th>Fréquence</th><th>Horaires</th></tr>
+      <tr><td>Vendredi</td><td>Une fois par mois</td><td>19h00 – 22h00</td></tr>
+      <tr><td>Autres jours</td><td class="closed">Aucun cours pour le moment</td><td class="closed">—</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="cours" class="cours">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Nos cours et activités</h2>
+      <p>Des rendez-vous réguliers, pensés pour progresser sans jamais perdre le plaisir de la table.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3>Dégustations commentées</h3>
+        <p>Des soirées thématiques autour d'une région, d'un cépage ou d'un accord mets-vins, animées par des membres expérimentés.</p>
+      </div>
+      <div class="card">
+        <h3>Ateliers d'initiation</h3>
+        <p>Pour apprendre les bases : les arômes, la structure d'un vin, la lecture d'une étiquette, sans complexe.</p>
+      </div>
+      <div class="card">
+        <h3>Sorties vignobles</h3>
+        <p>Des visites de domaines et de caves, à la rencontre des vignerons qui font ce que nous dégustons.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ou-nous-trouver">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Où nous trouver</h2>
+      <p>Venez nous rencontrer directement sur place, lors d'une séance ou d'une permanence.</p>
+    </div>
+    <div class="lieu-grid">
+      <div class="lieu-info">
+        <p><strong>Adresse :</strong> [Adresse à compléter], Angerville, Île-de-France</p>
+        <p><strong>Téléphone :</strong> [Numéro à compléter]</p>
+        <p><strong>Email :</strong> [Email à compléter]</p>
+        <p class="label-line">Accès : à préciser (parking, transports, entrée).</p>
+      </div>
+      <div class="map-frame">
+        <iframe src="https://www.google.com/maps?q=Angerville%2C%20France&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="contact-layout">
+    <div class="bottle">
+      <svg viewBox="0 0 250 620" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="glass" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#050302"/>
+            <stop offset="14%" stop-color="#231015"/>
+            <stop offset="36%" stop-color="#3B0E1C"/>
+            <stop offset="58%" stop-color="#1A0509"/>
+            <stop offset="100%" stop-color="#050302"/>
+          </linearGradient>
+          <linearGradient id="foil" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#6E551F"/>
+            <stop offset="45%" stop-color="#D4B876"/>
+            <stop offset="55%" stop-color="#D4B876"/>
+            <stop offset="100%" stop-color="#6E551F"/>
+          </linearGradient>
+          <radialGradient id="punt" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#000" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- lip -->
+        <path d="M108,4 C108,2 110,0 113,0 L137,0 C140,0 142,2 142,4 L142,16 L108,16 Z" fill="url(#glass)"/>
+        <!-- ring under lip -->
+        <rect x="105" y="16" width="40" height="8" rx="2" fill="#0A0403"/>
+
+        <!-- neck + shoulder + body + punt, one continuous silhouette -->
+        <path d="
+          M108,24 L142,24
+          L142,88
+          C142,96 146,101 152,108
+          C176,132 202,152 204,182
+          L204,520
+          C204,562 186,590 152,598
+          L98,598
+          C64,590 46,562 46,520
+          L46,182
+          C48,152 74,132 98,108
+          C104,101 108,96 108,88
+          Z"
+          fill="url(#glass)" stroke="#000" stroke-width="1" stroke-opacity="0.45"/>
+
+        <!-- punt shadow at base -->
+        <ellipse cx="125" cy="584" rx="60" ry="13" fill="url(#punt)"/>
+
+        <!-- foil capsule over neck -->
+        <path d="M104,26 L146,26 L144,110 C144,116 138,120 125,120 C112,120 106,116 106,110 Z" fill="url(#foil)"/>
+        <rect x="104" y="98" width="42" height="3.5" fill="#4F3D18" opacity="0.7"/>
+        <rect x="104" y="106" width="42" height="3.5" fill="#4F3D18" opacity="0.7"/>
+        <path d="M104,26 L146,26 L144,42 L106,42 Z" fill="#8A6C2C" opacity="0.5"/>
+
+        <!-- glass highlight streaks -->
+        <path d="M62,190 C62,164 80,146 96,130 L104,130 C90,150 74,166 74,192 L74,510 C74,538 84,558 98,570 L90,570 C76,556 66,536 66,510 Z" fill="#fff" opacity="0.08"/>
+        <path d="M186,200 C186,174 196,158 204,146 L204,516 C196,504 188,490 188,468 Z" fill="#fff" opacity="0.05"/>
+
+        <!-- rim highlight -->
+        <path d="M46,182 C48,152 74,132 98,108 L102,110 C80,132 56,152 54,182 Z" fill="#fff" opacity="0.1"/>
+      </svg>
+
+      <div class="label">
+        <div class="eyebrow">Qui a bu</div>
+        <h3>Nos coordonnées</h3>
+        <div class="rule"></div>
+        <div class="coords">
+          [Adresse à compléter]<br>
+          [Téléphone à compléter]<br>
+          [Email à compléter]
+        </div>
+        <!--
+          POUR ACTIVER L'ENVOI D'EMAIL (à faire quand tu es prêt) :
+          1. Va sur https://web3forms.com
+          2. Entre ton adresse email, ils t'envoient une "clé d'accès" (access key), gratuit, aucun compte requis
+          3. Remplace COLLEZ_VOTRE_CLE_WEB3FORMS_ICI ci-dessous par cette clé
+          4. C'est tout : quand quelqu'un remplit le formulaire, tu reçois un email avec un résumé
+             (nom, email, message). Aucun serveur ni base de données à héberger.
+        -->
+        <form id="bottleForm" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="COLLEZ_VOTRE_CLE_WEB3FORMS_ICI">
+          <input type="text" name="name" placeholder="Votre nom" required>
+          <input type="email" name="email" placeholder="Votre email" required>
+          <textarea name="message" placeholder="Votre message" required></textarea>
+          <button type="submit">Envoyer</button>
+        </form>
+      </div>
+    </div>
+    <div class="contact-intro">
+      <h2>Rejoignez le Cercle</h2>
+      <p>Une question, envie d'assister à une dégustation ou de devenir membre ? Écrivez-nous directement depuis l'étiquette, ou passez nous voir.</p>
+      <ul>
+        <li>Réponse sous 48h</li>
+        <li>Première dégustation offerte aux nouveaux membres</li>
+        <li>Aucune expérience préalable requise</li>
+      </ul>
+      <p class="form-note">Le formulaire envoie directement un résumé par email via Web3Forms — aucun serveur ni base de données à gérer.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Qui a bu — Association loi 1901
+</footer>
+
+<script>
+  const burgerBtn = document.getElementById('burgerBtn');
+  const navLinks = document.getElementById('navLinks');
+  burgerBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+</script>
+
+</body>
+</html>
